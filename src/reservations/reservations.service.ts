@@ -1,36 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
-import { Reservation } from './schemas/reservations.schemas';
+import { HotelsService } from 'src/hotels/hotels.service';
+import { UsersService } from 'src/users/users.service';
+import { CreateReservationDto } from './dtos/create-reservation.dto';
+// import { UpdateReservationDto } from './dtos/update-reservation.dto';
+import {
+  Reservation,
+  ReservationDocument,
+  UpdateReservationInput,
+} from './schemas/reservations.schemas';
 
 @Injectable()
 export class ReservationsService {
   constructor(
-    @InjectModel(Reservation.name) private hotelModel: Model<Reservation>,
+    @InjectModel(Reservation.name)
+    private reservationsModel: Model<ReservationDocument>,
+    @Inject(forwardRef(() => UsersService))
+    private userService: UsersService,
+    @Inject(forwardRef(() => HotelsService))
+    private hotelsService: HotelsService,
   ) {}
 
   async create(
     createReservationDto: CreateReservationDto,
-  ): Promise<Reservation> {
-    const createdReservation = new this.hotelModel(createReservationDto);
-    return createdReservation.save();
+  ): Promise<ReservationDocument> {
+    const { hotel: hotelId } = createReservationDto;
+
+    const createdReservation = new this.reservationsModel(createReservationDto);
+
+    const theHotel = await this.hotelsService.findOne(hotelId);
+
+    const newRes = await createdReservation.save();
+
+    const newResId = [newRes.id, ...(theHotel.reservations || [])];
+    await this.hotelsService.update(hotelId, { reservations: newResId });
+
+    return newRes;
   }
 
-  async findAll(): Promise<Reservation[]> {
-    return this.hotelModel.find().populate(['hotel', 'user']).exec();
+  async findAll(filters?: object) {
+    return this.reservationsModel.find(filters);
   }
 
-  findOne(id: string) {
-    return this.hotelModel.findById(id);
+  findOne(id: string): Promise<ReservationDocument> {
+    return this.reservationsModel.findById(id);
   }
 
-  update(id: string, updateReservationDto: UpdateReservationDto) {
-    return this.hotelModel.findByIdAndUpdate(id, updateReservationDto);
+  update(id: string, updateReservationInput: UpdateReservationInput) {
+    return this.reservationsModel.findByIdAndUpdate(id, updateReservationInput);
   }
 
   remove(id: string) {
-    return this.hotelModel.findByIdAndRemove(id);
+    return this.reservationsModel.findByIdAndRemove(id);
+  }
+
+  async getManyReservations(ids: string[]) {
+    return this.reservationsModel.find().where('_id').in(ids);
   }
 }

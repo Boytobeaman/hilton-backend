@@ -1,7 +1,4 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateHotelDto } from './create-hotel.dto';
 
-export class UpdateHotelDto extends PartialType(CreateHotelDto) {
-  readonly name: string;
-  readonly address: string;
-}
+export class UpdateHotelDto extends PartialType(CreateHotelDto) {}

@@ -8,9 +8,15 @@ import { ReservationsModule } from './reservations/reservations.module';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './users/jwt-auth.guard';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver } from '@nestjs/apollo';
 
 @Module({
   imports: [
+    GraphQLModule.forRoot({
+      autoSchemaFile: './schema.gql',
+      driver: ApolloDriver,
+    }),
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.DB_URI),
     UsersModule,

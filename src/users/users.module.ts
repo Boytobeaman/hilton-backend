@@ -8,6 +8,7 @@ import { ExampleMiddleware } from './middlewares/example/example.middleware';
 import { User, UserSchema } from './schemas/users.schemas';
 import { UsersService } from './users.service';
 import { JwtStrategy } from './jwt.strategy';
+import { UserResolver } from './users.resolver';
 
 @Module({
   imports: [
@@ -27,8 +28,8 @@ import { JwtStrategy } from './jwt.strategy';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, JwtStrategy],
-  exports: [JwtStrategy, PassportModule],
+  providers: [UsersService, JwtStrategy, UserResolver],
+  exports: [JwtStrategy, PassportModule, UsersService],
 })
 export class UsersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

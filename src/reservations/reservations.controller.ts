@@ -8,8 +8,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
-import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { CreateReservationDto } from './dtos/create-reservation.dto';
+import { UpdateReservationInput } from './schemas/reservations.schemas';
 
 @Controller('reservations')
 export class ReservationsController {
@@ -33,9 +33,9 @@ export class ReservationsController {
   @Put(':id')
   update(
     @Param('id') id: string,
-    @Body() updateReservationDto: UpdateReservationDto,
+    @Body() updateReservationInput: UpdateReservationInput,
   ) {
-    return this.reservationsService.update(id, updateReservationDto);
+    return this.reservationsService.update(id, updateReservationInput);
   }
 
   @Delete(':id')

@@ -16,4 +16,6 @@ export class CreateUserDto {
   phone: string;
 
   role: string;
+
+  reservations?: string[];
 }

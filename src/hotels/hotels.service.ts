@@ -1,16 +1,22 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateHotelDto } from './dtos/create-hotel.dto';
-import { UpdateHotelDto } from './dtos/update-hotel.dto';
-import { Hotel } from './schemas/hotels.schemas';
+import {
+  CreateHotelInput,
+  Hotel,
+  HotelDocument,
+  UpdateHotelInput,
+} from './schemas/hotels.schemas';
 
 @Injectable()
 export class HotelsService {
-  constructor(@InjectModel(Hotel.name) private hotelModel: Model<Hotel>) {}
+  constructor(
+    @InjectModel(Hotel.name) private hotelModel: Model<HotelDocument>,
+  ) {}
 
-  async create(createHotelDto: CreateHotelDto): Promise<Hotel> {
-    const createdHotel = new this.hotelModel(createHotelDto);
+  async create(createHotelInput: CreateHotelInput): Promise<Hotel> {
+    createHotelInput.reservations = [];
+    const createdHotel = new this.hotelModel(createHotelInput);
     return createdHotel.save();
   }
 
@@ -22,8 +28,8 @@ export class HotelsService {
     return this.hotelModel.findById(id);
   }
 
-  update(id: string, updateHotelDto: UpdateHotelDto) {
-    return this.hotelModel.findByIdAndUpdate(id, updateHotelDto);
+  update(id: string, updateHotelInput: UpdateHotelInput) {
+    return this.hotelModel.findByIdAndUpdate(id, updateHotelInput);
   }
 
   remove(id: string) {

@@ -1,0 +1,117 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Hotel {
+  _id: String!
+  name: String!
+  address: String!
+  reservations(filters: ReservationFiltersInput): [Reservation]
+}
+
+input ReservationFiltersInput {
+  status: StatusFiltersInput!
+  user: UserFiltersInput!
+}
+
+input StatusFiltersInput {
+  ne: String!
+}
+
+input UserFiltersInput {
+  id: String!
+}
+
+type Reservation {
+  _id: String!
+  expected_arrival_time: DateTime!
+  size: Float!
+  username: String!
+  phone: String!
+  status: String!
+  hotel: Hotel!
+  user: User!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type User {
+  _id: String!
+  username: String!
+  email: String!
+  phone: String!
+  password: String!
+  role: String!
+  reservations: [Reservation!]!
+}
+
+type UsersPermissionsMe {
+  id: String!
+  username: String!
+  phone: String!
+  email: String!
+  role: String!
+}
+
+type UsersPermissionsLoginPayload {
+  token: String!
+  user: UsersPermissionsMe!
+}
+
+type Query {
+  hotel(id: String!): Hotel!
+  hotels: [Hotel!]
+  reservation(id: String!): Reservation
+  reservations(filters: ReservationFiltersInput): [Reservation!]
+}
+
+type Mutation {
+  login(loginInput: UsersPermissionsLoginInput!): UsersPermissionsLoginPayload!
+  updateHotel(id: String!, updateHotelInput: UpdateHotelInput!): Hotel!
+  createHotel(createHotelInput: CreateHotelInput!): Hotel!
+
+  """delete hotel"""
+  deleteHotel(id: String!): Hotel!
+  createReservation(createReservationInput: CreateReservationInput!): Reservation!
+  updateReservation(id: String!, updateReservationInput: UpdateReservationInput!): Reservation!
+
+  """delete hotel"""
+  deleteReservation(id: String!): Reservation!
+}
+
+input UsersPermissionsLoginInput {
+  username: String!
+  password: String!
+}
+
+input UpdateHotelInput {
+  name: String
+  address: String
+}
+
+input CreateHotelInput {
+  name: String!
+  address: String!
+  reservations: [ID]
+}
+
+input CreateReservationInput {
+  expected_arrival_time: DateTime!
+  size: Float!
+  username: String!
+  phone: String!
+  status: String!
+  hotel: ID!
+  user: ID!
+}
+
+input UpdateReservationInput {
+  expected_arrival_time: DateTime
+  size: Float
+  username: String
+  phone: String
+  status: String
+}

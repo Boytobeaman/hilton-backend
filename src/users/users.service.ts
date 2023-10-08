@@ -1,17 +1,21 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { User } from './schemas/users.schemas';
+import { User, UserDocument } from './schemas/users.schemas';
 import * as bcrypt from 'bcryptjs';
 import { LoginUserDto } from './dtos/login-user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
     private jwtService: JwtService,
   ) {}
 
@@ -63,31 +67,35 @@ export class UsersService {
     });
     const responseUser = {
       id: user._id,
-      name: user.username,
+      username: user.username,
       phone: user.phone,
+      email: user.email,
+      role: user.role,
     };
 
     return { token, user: responseUser };
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
-  }
+  // async create(createUserDto: CreateUserDto): Promise<User> {
+  //   console.log(createUserDto);
+  //   createUserDto.reservations = [];
+  //   const createdUser = new this.userModel(createUserDto);
+  //   return createdUser.save();
+  // }
 
   async findAll(): Promise<User[]> {
-    return this.userModel.find().populate('reservations').exec();
+    return this.userModel.find().exec();
   }
 
   findOne(id: string) {
-    return this.userModel.findById(id).populate('reservations').exec();
+    return this.userModel.findById(id);
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(id, updateUserDto);
+    return this.userModel.findByIdAndUpdate(id, updateUserDto).exec();
   }
 
   remove(id: string) {
-    return this.userModel.findByIdAndRemove(id);
+    return this.userModel.findByIdAndRemove(id).exec();
   }
 }
