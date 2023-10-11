@@ -6,6 +6,8 @@ import { utilities, WinstonModule } from 'nest-winston';
 import 'winston-daily-rotate-file';
 import * as morgan from 'morgan';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { HttpExceptionFilter } from './filters/http.exception.filter';
+import { MongoExceptionFilter } from './filters/mongo.exception.filter';
 
 async function bootstrap() {
   const instance = winston.createLogger({
@@ -54,6 +56,9 @@ async function bootstrap() {
 
   // need app: NestExpressApplication to use app.set
   app.set('trust proxy', true);
+
+  app.useGlobalFilters(new HttpExceptionFilter(logger));
+  app.useGlobalFilters(new MongoExceptionFilter(logger));
 
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();

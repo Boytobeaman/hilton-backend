@@ -37,11 +37,6 @@ export class UsersController {
   @Public()
   @Post('/login')
   login(@Body() loginUserDto: LoginUserDto): Promise<{ token: string }> {
-    this.logger.log(`kkk info`);
-    this.logger.warn(`kkk warn`);
-    this.logger.error(`kkk error`);
-    this.logger.verbose(`kkk verbose`);
-    console.log(`kkkk`);
     return this.usersService.login(loginUserDto);
   }
 
