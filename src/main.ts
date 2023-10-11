@@ -5,6 +5,7 @@ import * as winston from 'winston';
 import { utilities, WinstonModule } from 'nest-winston';
 import 'winston-daily-rotate-file';
 import * as morgan from 'morgan';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const instance = winston.createLogger({
@@ -35,7 +36,7 @@ async function bootstrap() {
     instance,
   });
 
-  const app = await NestFactory.create(AppModule, {
+  const app: NestExpressApplication = await NestFactory.create(AppModule, {
     logger,
   });
 
@@ -50,6 +51,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  // need app: NestExpressApplication to use app.set
+  app.set('trust proxy', true);
 
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
