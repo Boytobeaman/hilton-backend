@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Post,
   Put,
@@ -17,7 +18,10 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private readonly logger: Logger,
+  ) {}
 
   // @Post()
   // create(@Body() createUserDto: CreateUserDto) {
@@ -33,6 +37,11 @@ export class UsersController {
   @Public()
   @Post('/login')
   login(@Body() loginUserDto: LoginUserDto): Promise<{ token: string }> {
+    this.logger.log(`kkk info`);
+    this.logger.warn(`kkk warn`);
+    this.logger.error(`kkk error`);
+    this.logger.verbose(`kkk verbose`);
+    console.log(`kkkk`);
     return this.usersService.login(loginUserDto);
   }
 

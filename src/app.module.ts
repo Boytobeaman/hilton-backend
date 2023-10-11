@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -11,6 +11,7 @@ import { JwtAuthGuard } from './users/jwt-auth.guard';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
 
+@Global()
 @Module({
   imports: [
     GraphQLModule.forRoot({
@@ -30,6 +31,8 @@ import { ApolloDriver } from '@nestjs/apollo';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    Logger,
   ],
+  exports: [Logger],
 })
 export class AppModule {}
