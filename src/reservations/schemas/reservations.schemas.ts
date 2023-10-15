@@ -5,6 +5,11 @@ import { Hotel } from 'src/hotels/schemas/hotels.schemas';
 import { RESERVATION_STATUS } from 'src/utils/const';
 import { Field, ID, InputType, ObjectType } from '@nestjs/graphql';
 import { PartialType } from '@nestjs/mapped-types';
+import {
+  DateTimeFilterInput,
+  IntFilterInput,
+  StringFilterInput,
+} from 'src/common/graphql/common.graphqltype';
 
 export type ReservationDocument = HydratedDocument<Reservation>;
 
@@ -92,24 +97,30 @@ export class UpdateReservationInput extends PartialType(
 }
 
 @InputType()
-export class UserFiltersInput {
-  @Field()
-  id: string;
-}
-
-@InputType()
-export class StatusFiltersInput {
-  @Field()
-  ne: string;
-}
-
-@InputType()
 export class ReservationFiltersInput {
-  @Field()
-  status?: StatusFiltersInput;
+  @Field({ nullable: true })
+  status?: StringFilterInput;
 
-  @Field()
-  user?: UserFiltersInput;
+  @Field({ nullable: true })
+  user?: string;
+
+  @Field({ nullable: true })
+  username?: StringFilterInput;
+
+  @Field({ nullable: true })
+  phone?: StringFilterInput;
+
+  @Field({ nullable: true })
+  size?: IntFilterInput;
+
+  @Field(() => DateTimeFilterInput, { nullable: true })
+  expected_arrival_time?: DateTimeFilterInput;
+
+  @Field(() => [ReservationFiltersInput], { nullable: true })
+  and?: [ReservationFiltersInput];
+
+  @Field(() => [ReservationFiltersInput], { nullable: true })
+  or?: [ReservationFiltersInput];
 }
 
 export const ReservationSchema = SchemaFactory.createForClass(Reservation);

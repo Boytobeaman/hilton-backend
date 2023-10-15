@@ -1,4 +1,10 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { HotelsService } from 'src/hotels/hotels.service';
@@ -31,6 +37,9 @@ export class ReservationsService {
 
     const theHotel = await this.hotelsService.findOne(hotelId);
 
+    if (!theHotel) {
+      throw new HttpException('Hotel not exist', HttpStatus.BAD_REQUEST);
+    }
     const newRes = await createdReservation.save();
 
     const newResId = [newRes.id, ...(theHotel.reservations || [])];

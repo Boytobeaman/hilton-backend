@@ -10,17 +10,59 @@ type Hotel {
 }
 
 input ReservationFiltersInput {
-  status: StatusFiltersInput!
-  user: UserFiltersInput!
+  status: StringFilterInput
+  user: String
+  username: StringFilterInput
+  phone: StringFilterInput
+  size: IntFilterInput
+  expected_arrival_time: DateTimeFilterInput
+  and: [ReservationFiltersInput!]
+  or: [ReservationFiltersInput!]
 }
 
-input StatusFiltersInput {
-  ne: String!
+input StringFilterInput {
+  and: [String!]
+  or: [String!]
+  not: StringFilterInput
+  eq: String
+  ne: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  in: [String!]
 }
 
-input UserFiltersInput {
-  id: String!
+input IntFilterInput {
+  and: [String!]
+  or: [String!]
+  not: StringFilterInput
+  eq: String
+  ne: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  in: [String!]
 }
+
+input DateTimeFilterInput {
+  and: [DateTime!]
+  or: [DateTime!]
+  not: DateTimeFilterInput
+  eq: DateTime
+  ne: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime!]
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Reservation {
   _id: String!
@@ -32,11 +74,6 @@ type Reservation {
   hotel: Hotel!
   user: User!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type User {
   _id: String!
